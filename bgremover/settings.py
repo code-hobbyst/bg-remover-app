@@ -83,3 +83,40 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+import os
+
+# Vercel deployment settings
+ALLOWED_HOSTS = ['*']
+
+# Check if running on Vercel
+if os.environ.get('VERCEL_ENV'):
+    DEBUG = False
+    
+    # Database configuration for Vercel
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': '/tmp/db.sqlite3',
+        }
+    }
+    
+    # Static files configuration
+    STATIC_URL = '/static/'
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
+    STATIC_ROOT = BASE_DIR / 'staticfiles_build' / 'static'
+    
+    # Media files configuration
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = '/tmp/media'
+    
+    # Security settings
+    SECURE_SSL_REDIRECT = False
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+else:
+    # Local development settings
+    DEBUG = True
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
