@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="text-center mb-5">
+            <h1 class="display-4">🎨 Background Remover</h1>
+            <p class="lead">Upload an image and remove its background using AI-powered algorithms</p>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="image" class="form-label fs-5">📁 Choose Image</label>
+                        <input type="file" class="form-control form-control-lg" name="image" accept="image/*" required>
+                        <div class="form-text">Supported: JPG, PNG, GIF (Max: 10MB)</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fs-6">🔧 Background Removal Method</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" value="smart" id="smart" checked>
+                                    <label class="form-check-label" for="smart">
+                                        <strong>Smart Detection</strong><br>
+                                        <small class="text-muted">Automatically detects background color</small>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" value="color" id="color">
+                                    <label class="form-check-label" for="color">
+                                        <strong>Color Threshold</strong><br>
+                                        <small class="text-muted">Advanced color-based removal</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" value="white" id="white">
+                                    <label class="form-check-label" for="white">
+                                        <strong>White Background</strong><br>
+                                        <small class="text-muted">Best for white/light backgrounds</small>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" value="edge" id="edge">
+                                    <label class="form-check-label" for="edge">
+                                        <strong>Edge Detection</strong><br>
+                                        <small class="text-muted">Uses edge detection algorithm</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            ✨ Remove Background
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if recent_images %}
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="text-center mb-4">📸 Recent Results</h3>
+        <div class="row">
+            {% for image in recent_images %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-6">
+                            <img src="{{ image.original_image.url }}" class="img-fluid h-100" style="object-fit: cover;">
+                        </div>
+                        <div class="col-6" style="background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%) 50% / 20px 20px;">
+                            <img src="{{ image.processed_image.url }}" class="img-fluid h-100" style="object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="card-body text-center">
+                        <small class="text-muted">{{ image.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
